@@ -1,5 +1,5 @@
 # datajar.mobi-Reference-Kubernetes-Build
-A repository containing some files to be as a reference when looking at containerising Jamf Pro
+A repository containing reference files to possible review when looking at containerising Jamf Pro
 
 As-is, these will not stand up a working Jamf Pro deployment.
 
