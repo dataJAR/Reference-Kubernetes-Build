@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataBase>
+	<DataBaseType>mysql</DataBaseType>
+	<DataBaseDriver>com.mysql.jdbc.Driver</DataBaseDriver>
+	<ServerName>{{getenv "MYSQL_TARQUIN_SERVICE_HOST"}}</ServerName>
+	<ServerPort>{{getenv "MYSQL_TARQUIN_SERVICE_PORT"}}</ServerPort>
+	<DataBaseName>{{getenv "JSS_DB_NAME"}}</DataBaseName>
+	<DataBaseUser>{{getenv "JSS_DB_USERNAME"}}</DataBaseUser>
+	<DataBasePassword>{{getenv "JSS_DB_PASSWORD"}}</DataBasePassword>
+	<MinPoolSize>5</MinPoolSize>
+	<MaxPoolSize>46</MaxPoolSize>
+	<MaxIdleTimeExcessConnectionsInMinutes>1</MaxIdleTimeExcessConnectionsInMinutes>
+	<MaxConnectionAgeInMinutes>5</MaxConnectionAgeInMinutes>
+	<NumHelperThreads>3</NumHelperThreads>
+	<InStatementBatchSize>1000</InStatementBatchSize>
+	<jdbcParameters>?characterEncoding=utf8&amp;useUnicode=true&amp;jdbcCompliantTruncation=false</jdbcParameters>
+</DataBase>

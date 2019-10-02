@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jss-client-placeholder
+  labels:
+    app: client-placeholder
+    tier: jss
+spec:
+  ports:
+    - port: 8080
+  selector:
+    app: client-placeholder
+    tier: jss
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jss-client-placeholder
+  labels:
+     app: client-placeholder
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: client-placeholder
+        tier: jss
+    spec:
+      containers:
+      - image: registry.datajar.mobi:5000/jss-client-placeholder:jss-version-placeholder
+        imagePullPolicy: Always
+        name: jss-client-placeholder
+        env:
+          - name: JSS_NAME
+            value: client-placeholder
+          - name: JSS_DB_NAME
+            value: client-placeholder
+          - name: JSS_DB_USERNAME
+            value: client-placeholder
+          - name: JSS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: client-placeholder-mysql-jss-user
+                key: client-placeholder-mysql-jss-user.txt
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: client-placeholder-mysql-root
+                key: client-placeholder-mysql-root.txt
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /healthCheck.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 600
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+      imagePullSecrets:
+      - name: datajar-registry

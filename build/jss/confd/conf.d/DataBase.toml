@@ -1,0 +1,10 @@
+[template]
+src = "DataBase.xml.tmpl"
+dest = "/usr/local/tomcat/webapps/ROOT/WEB-INF/xml/DataBase.xml"
+keys = [
+    "MYSQL_TARQUIN_SERVICE_HOST",
+    "MYSQL_TARQUIN_SERVICE_PORT",
+    "JSS_DB_NAME",
+    "JSS_DB_USERNAME",
+    "JSS_DB_PASSWORD",
+]
