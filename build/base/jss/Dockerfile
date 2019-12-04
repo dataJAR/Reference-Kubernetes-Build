@@ -10,16 +10,39 @@ ARG tomcat_ver
 # Package installs
 RUN /usr/bin/apt-get update
 RUN /usr/bin/apt-get install -y --no-install-recommends \
+    ca-certificates \
     curl \
+    java-common \
     mysql-client \
     nano \
-    openjdk-11-jdk \
     tzdata
 
 
 # Timezone
 # https://serverfault.com/a/826222
 ENV TZ=Europe/London
+
+
+# Amazon Coretto 11
+RUN CORRETTO11_LATEST=$(/usr/bin/curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"" '/href="/{ print $2 }'); \
+    DEB_NAME=$(/usr/bin/basename "${CORRETTO11_LATEST}"); \ 
+    /usr/bin/curl -SL "${CORRETTO11_LATEST}" -o /tmp/"${DEB_NAME}"; \
+    if [ ! -f /tmp/"${DEB_NAME}" ]; then \
+        /bin/echo; \
+        /bin/echo "ERROR: amazon corretto download failed, exiting..."; \
+        /bin/echo; \
+        exit 1; \
+    fi; \
+    REMOTE_MD5=$(curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep -A 6 "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"|>|<" '/\"code\"/{ print $7 }'); \
+    MD5_CHECKSUM=$(/usr/bin/md5sum /tmp/"${DEB_NAME}" | /usr/bin/awk '{ print $1 }'); \
+    if [ "${REMOTE_MD5}" != "${MD5_CHECKSUM}" ]; then \
+        /bin/echo; \
+        /bin/echo "ERROR: tomcat SHA check failed, exiting..."; \
+        /bin/echo; \
+        exit 1; \
+    else \
+        /usr/bin/dpkg --install /tmp/"${DEB_NAME}"; \
+    fi
 
 
 # Tomcat
