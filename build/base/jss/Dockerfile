@@ -33,7 +33,7 @@ RUN CORRETTO11_LATEST=$(/usr/bin/curl -Ls https://docs.aws.amazon.com/corretto/l
         /bin/echo; \
         exit 1; \
     fi; \
-    REMOTE_MD5=$(curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep -A 6 "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"|>|<" '/\"code\"/{ print $7 }'); \
+    REMOTE_MD5=$(/usr/bin/curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep -A 6 "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"|>|<" '/\"code\"/{ print $7 }'); \
     MD5_CHECKSUM=$(/usr/bin/md5sum /tmp/"${DEB_NAME}" | /usr/bin/awk '{ print $1 }'); \
     if [ "${REMOTE_MD5}" != "${MD5_CHECKSUM}" ]; then \
         /bin/echo; \
