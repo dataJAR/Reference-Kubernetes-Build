@@ -24,24 +24,29 @@ ENV TZ=Europe/London
 
 
 # Amazon Coretto 11
-RUN CORRETTO11_LATEST=$(/usr/bin/curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"" '/href="/{ print $2 }'); \
-    DEB_NAME=$(/usr/bin/basename "${CORRETTO11_LATEST}"); \ 
-    /usr/bin/curl -SL "${CORRETTO11_LATEST}" -o /tmp/"${DEB_NAME}"; \
-    if [ ! -f /tmp/"${DEB_NAME}" ]; then \
+RUN CORRETTO11_LATEST=$(/usr/bin/curl -LS https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.deb -o /tmp/amazon-corretto-11-latest.deb); \
+    if [ ! -f /tmp/amazon-corretto-11-latest.deb ]; then \
         /bin/echo; \
         /bin/echo "ERROR: amazon corretto download failed, exiting..."; \
         /bin/echo; \
         exit 1; \
     fi; \
-    REMOTE_MD5=$(curl -Ls https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html | /bin/grep -A 6 "java-11-amazon-corretto-jdk_11.*._amd64.deb" | /usr/bin/awk -F "\"|>|<" '/\"code\"/{ print $7 }'); \
-    MD5_CHECKSUM=$(/usr/bin/md5sum /tmp/"${DEB_NAME}" | /usr/bin/awk '{ print $1 }'); \
+    /usr/bin/curl -LS https://corretto.aws/downloads/latest_checksum/amazon-corretto-11-x64-linux-jdk.deb -o /tmp/amazon-corretto-11-latest-checksum.deb; \
+    REMOTE_MD5=$(/bin/cat /tmp/amazon-corretto-11-latest-checksum.deb); \
+    if [ ! -f /tmp/amazon-corretto-11-latest-checksum.deb ]; then \
+        /bin/echo; \
+        /bin/echo "ERROR: amazon corretto checksum download failed, exiting..."; \
+        /bin/echo; \
+        exit 1; \
+    fi; \
+    MD5_CHECKSUM=$(/usr/bin/md5sum /tmp/amazon-corretto-11-latest.deb | /usr/bin/awk '{ print $1 }'); \
     if [ "${REMOTE_MD5}" != "${MD5_CHECKSUM}" ]; then \
         /bin/echo; \
-        /bin/echo "ERROR: tomcat SHA check failed, exiting..."; \
+        /bin/echo "ERROR: amazon corretto checksum check failed, exiting..."; \
         /bin/echo; \
         exit 1; \
     else \
-        /usr/bin/dpkg --install /tmp/"${DEB_NAME}"; \
+        /usr/bin/dpkg --install /tmp/amazon-corretto-11-latest.deb; \
     fi
 
 
