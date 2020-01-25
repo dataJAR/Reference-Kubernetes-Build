@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: client-placeholder
+  name: mysql-client-placeholder
+spec:
+  progressDeadlineSeconds: 2147483647
+  replicas: 1
+  revisionHistoryLimit: 2147483647
+  selector:
+    matchLabels:
+      app: client-placeholder
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - /usr/local/bin/run.sh
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: client-placeholder-mysql-root.txt
+              name: client-placeholder-mysql-root
+        - name: MYSQL_DATABASE
+          value: client-placeholder
+        - name: MYSQL_USER
+          value: client-placeholder
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: client-placeholder-mysql-jss-user.txt
+              name: client-placeholder-mysql-jss-user
+        image: registry.datajar.mobi:5000/mysql-client-placeholder:mysql-version-placeholder
+        imagePullPolicy: IfNotPresent
+        name: mysql-client-placeholder
+        ports:
+        - containerPort: 3306
+          name: mysql
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: client-placeholder-mysql
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: datajar-registry
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: client-placeholder-mysql
+        persistentVolumeClaim:
+          claimName: client-placeholder-mysql
+status: {}
